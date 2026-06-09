@@ -10,7 +10,9 @@
     "seed": "node scripts/seed.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.3",
     "next": "16.2.7",
     "react": "19.2.4",
