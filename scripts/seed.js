@@ -1,5 +1,5 @@
 // Seed script: populates the database with sample colleges, reviews,
-// rank data, and questions. Run with: npm run seed
+// rank data (multi-exam), and questions. Run with: npm run seed
 
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -11,11 +11,11 @@ const __dirname = dirname(__filename);
 
 dotenv.config({ path: resolve(__dirname, "../.env.local") });
 
-// Import models
 import College from "../models/College.js";
 import Review from "../models/Review.js";
 import RankData from "../models/RankData.js";
 import Question from "../models/Question.js";
+import User from "../models/User.js";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -138,201 +138,240 @@ const colleges = [
     averagePlacement: 14.2,
     photos: [],
   },
+  {
+    name: "BITS Pilani",
+    city: "Pilani",
+    state: "Rajasthan",
+    type: "deemed",
+    established: 1964,
+    about:
+      "One of the most respected private-ish (deemed) universities in India. BITSAT is the way in. Known for its flexible curriculum, strong coding culture, and solid placements across branches.",
+    departments: [
+      { name: "Computer Science", rating: 4.6, reviewCount: 130 },
+      { name: "Electronics & Instrumentation", rating: 4.2, reviewCount: 85 },
+      { name: "Mechanical Engineering", rating: 3.9, reviewCount: 60 },
+      { name: "Chemical Engineering", rating: 3.7, reviewCount: 35 },
+      { name: "Pharmacy", rating: 3.8, reviewCount: 40 },
+    ],
+    facilities: { hostel: true, lab: true, library: true },
+    averagePlacement: 18.5,
+    photos: [],
+  },
+  {
+    name: "AIIMS Delhi",
+    city: "Delhi",
+    state: "Delhi",
+    type: "public",
+    established: 1956,
+    about:
+      "The top medical institution in India, no debate. Getting in through NEET is extremely competitive. World-class faculty, research opportunities that most colleges cannot match, and unbeatable clinical exposure.",
+    departments: [
+      { name: "MBBS", rating: 4.9, reviewCount: 200 },
+      { name: "Nursing", rating: 4.2, reviewCount: 45 },
+      { name: "Biotechnology", rating: 4.0, reviewCount: 30 },
+    ],
+    facilities: { hostel: true, lab: true, library: true },
+    averagePlacement: 25.0,
+    photos: [],
+  },
+  {
+    name: "JIPMER Puducherry",
+    city: "Puducherry",
+    state: "Puducherry",
+    type: "public",
+    established: 1823,
+    about:
+      "One of the oldest and most respected medical institutions in India. Entry is through NEET. Excellent clinical training, affordable fees, and a campus that feels like a small town on its own.",
+    departments: [
+      { name: "MBBS", rating: 4.5, reviewCount: 85 },
+      { name: "Nursing", rating: 3.9, reviewCount: 30 },
+    ],
+    facilities: { hostel: true, lab: true, library: true },
+    averagePlacement: 15.0,
+    photos: [],
+  },
 ];
 
-// Reviews written to sound like real students
 function getReviewsForCollege(collegeId, collegeName) {
   const reviewSets = {
     "NIT Srinagar": [
       {
-        studentName: "Arjun Nair",
-        branch: "Computer Science",
-        yearOfStudy: 3,
-        rating: 4,
+        studentName: "Arjun Nair", branch: "Computer Science", yearOfStudy: 3, rating: 4,
         title: "Good college, tough winters",
         body: "CSE department is pretty decent. The faculty for core subjects actually know their stuff. Winters are brutal though, and the internet can be spotty during shutdowns. But honestly, the campus next to Dal Lake is something else. You learn to manage around the issues.",
-        category: "overall",
-        isAnonymous: false,
+        category: "overall", isAnonymous: false,
       },
       {
-        studentName: "Rafia Mir",
-        branch: "Electronics & Communication",
-        yearOfStudy: 4,
-        rating: 3,
+        studentName: "Rafia Mir", branch: "Electronics & Communication", yearOfStudy: 4, rating: 3,
         title: "Hostels need work",
         body: "The hostel situation is okay-ish. Girls hostel is relatively better maintained. Boys side has some rooms that really need renovation. Hot water is inconsistent in winter which is a problem when it is minus something outside. Mess food is average, some days good, some days you order from outside.",
-        category: "hostel",
-        isAnonymous: false,
+        category: "hostel", isAnonymous: false,
       },
       {
-        studentName: "Anonymous",
-        branch: "Mechanical Engineering",
-        yearOfStudy: 2,
-        rating: 3,
+        studentName: "Anonymous", branch: "Mechanical Engineering", yearOfStudy: 2, rating: 3,
         title: "Placements are improving but slowly",
         body: "For CS and ECE, placements are getting better year by year. Mech and Civil still struggle. If you are in a non-CS branch, you need to upskill on your own. The placement cell tries but the location factor makes it hard to get companies to visit campus.",
-        category: "placement",
-        isAnonymous: true,
+        category: "placement", isAnonymous: true,
       },
     ],
     "IUST Awantipora": [
       {
-        studentName: "Syed Irfan",
-        branch: "Computer Science",
-        yearOfStudy: 3,
-        rating: 3,
+        studentName: "Syed Irfan", branch: "Computer Science", yearOfStudy: 3, rating: 3,
         title: "Growing university with potential",
         body: "IUST is still figuring things out. The CS department has some really good young faculty who are genuinely passionate. Infrastructure is improving, new buildings coming up. It is not NIT level yet but for a university this young, the progress is noticeable.",
-        category: "department",
-        isAnonymous: false,
+        category: "department", isAnonymous: false,
       },
       {
-        studentName: "Zainab Bhat",
-        branch: "Food Technology",
-        yearOfStudy: 4,
-        rating: 4,
+        studentName: "Zainab Bhat", branch: "Food Technology", yearOfStudy: 4, rating: 4,
         title: "Underrated program honestly",
         body: "Nobody talks about Food Tech here but our department is actually well equipped. Lab facilities are solid. Placements are not huge numbers but there are decent opportunities in the food processing industry. The faculty are approachable and genuinely helpful.",
-        category: "department",
-        isAnonymous: false,
+        category: "department", isAnonymous: false,
       },
       {
-        studentName: "Anonymous",
-        branch: "Electronics & Communication",
-        yearOfStudy: 2,
-        rating: 3,
+        studentName: "Anonymous", branch: "Electronics & Communication", yearOfStudy: 2, rating: 3,
         title: "Campus life is quiet",
         body: "The campus is in Awantipora so do not expect a city college vibe. It is peaceful which is great for studying but not much happening otherwise. Library is decent, labs are getting updated. Just wish there were more tech events and workshops.",
-        category: "campus",
-        isAnonymous: true,
+        category: "campus", isAnonymous: true,
       },
     ],
     "NIT Hamirpur": [
       {
-        studentName: "Priya Sharma",
-        branch: "Computer Science",
-        yearOfStudy: 4,
-        rating: 4,
+        studentName: "Priya Sharma", branch: "Computer Science", yearOfStudy: 4, rating: 4,
         title: "Great for CS, town is tiny",
         body: "If you are in CS here, placements are genuinely good now. Top companies come, packages have been climbing. The downside is Hamirpur itself. There is literally nothing in the town. You are stuck on campus, which means you either love it or hate it. I got used to it.",
-        category: "placement",
-        isAnonymous: false,
+        category: "placement", isAnonymous: false,
       },
       {
-        studentName: "Rohit Gupta",
-        branch: "Mechanical Engineering",
-        yearOfStudy: 3,
-        rating: 3,
+        studentName: "Rohit Gupta", branch: "Mechanical Engineering", yearOfStudy: 3, rating: 3,
         title: "Decent college, not much for non-CS",
         body: "Mech department is okay. Labs are functional but nothing fancy. Most people in non-CS branches end up preparing for GATE or switching to IT roles through self-study. The college itself is nice, campus is hilly and beautiful. Just set your expectations right for placements.",
-        category: "overall",
-        isAnonymous: false,
+        category: "overall", isAnonymous: false,
       },
       {
-        studentName: "Anonymous",
-        branch: "Electronics & Communication",
-        yearOfStudy: 2,
-        rating: 4,
+        studentName: "Anonymous", branch: "Electronics & Communication", yearOfStudy: 2, rating: 4,
         title: "Hostel life is actually fun here",
         body: "Since everyone lives on campus and there is nowhere else to go, the hostel community is tight. Late night coding sessions, random cricket matches, chai runs at 2am. Rooms are small but you get used to it. Food could be better but they recently changed the vendor.",
-        category: "hostel",
-        isAnonymous: true,
+        category: "hostel", isAnonymous: true,
       },
     ],
     "MNIT Jaipur": [
       {
-        studentName: "Kavya Meena",
-        branch: "Computer Science",
-        yearOfStudy: 4,
-        rating: 5,
+        studentName: "Kavya Meena", branch: "Computer Science", yearOfStudy: 4, rating: 5,
         title: "Best NIT for city life and placements",
         body: "Being in Jaipur is a huge advantage. Internships, meetups, startup scene, everything is accessible. CS placements are strong, we had multiple offers above 30 LPA last year. Faculty is a mix, some are excellent, some are just okay. But the peer group pushes you to do well.",
-        category: "placement",
-        isAnonymous: false,
+        category: "placement", isAnonymous: false,
       },
       {
-        studentName: "Harsh Agarwal",
-        branch: "Electrical Engineering",
-        yearOfStudy: 3,
-        rating: 4,
+        studentName: "Harsh Agarwal", branch: "Electrical Engineering", yearOfStudy: 3, rating: 4,
         title: "Solid all-rounder college",
         body: "MNIT has that old-NIT charm. The campus is right in the city, which has its pros and cons. Hostels are decent, nothing luxurious. Labs for EE are well maintained. The culture is competitive but not toxic. Fests like Blitzschlag are genuinely fun.",
-        category: "overall",
-        isAnonymous: false,
+        category: "overall", isAnonymous: false,
       },
       {
-        studentName: "Anonymous",
-        branch: "Chemical Engineering",
-        yearOfStudy: 2,
-        rating: 3,
+        studentName: "Anonymous", branch: "Chemical Engineering", yearOfStudy: 2, rating: 3,
         title: "Chem Eng is neglected here",
         body: "Honestly, if you are in Chemical Engineering, MNIT is not the best experience. Department gets less attention and funding compared to CS and ECE. Placements for our branch are mediocre. You will need to branch out into data science or consulting on your own. Library is good though.",
-        category: "department",
-        isAnonymous: true,
+        category: "department", isAnonymous: true,
       },
     ],
     "DTU Delhi": [
       {
-        studentName: "Aditya Verma",
-        branch: "Software Engineering",
-        yearOfStudy: 4,
-        rating: 5,
+        studentName: "Aditya Verma", branch: "Software Engineering", yearOfStudy: 4, rating: 5,
         title: "Top tier placements and crowd",
         body: "DTU placements are no joke. CS and SE branches consistently see great offers. The competitive coding culture is intense. Everyone is building something, doing GSoC, interning at startups. The metro connectivity makes life easy. Campus canteen is legendary for cheap samosas.",
-        category: "placement",
-        isAnonymous: false,
+        category: "placement", isAnonymous: false,
       },
       {
-        studentName: "Neha Singh",
-        branch: "Information Technology",
-        yearOfStudy: 3,
-        rating: 4,
+        studentName: "Neha Singh", branch: "Information Technology", yearOfStudy: 3, rating: 4,
         title: "Campus is old but has character",
         body: "The infrastructure shows its age in some parts. Some classrooms need renovation. But the new library is great, and labs have been updated recently. What makes DTU special is the people and the fests. Engifest is massive. Also being in Delhi means you are never bored on weekends.",
-        category: "campus",
-        isAnonymous: false,
+        category: "campus", isAnonymous: false,
       },
       {
-        studentName: "Anonymous",
-        branch: "Mechanical Engineering",
-        yearOfStudy: 2,
-        rating: 3,
+        studentName: "Anonymous", branch: "Mechanical Engineering", yearOfStudy: 2, rating: 3,
         title: "Hostel allotment is a mess",
         body: "Getting a hostel in DTU is a struggle. Priority goes to outstation students and even then it is not guaranteed. If you are from Delhi, forget about it. The hostels themselves are fine, not great, not terrible. Mess food is passable. AC is only in newer blocks.",
-        category: "hostel",
-        isAnonymous: true,
+        category: "hostel", isAnonymous: true,
       },
     ],
     "NIT Warangal": [
       {
-        studentName: "Sreekanth Reddy",
-        branch: "Computer Science",
-        yearOfStudy: 4,
-        rating: 5,
+        studentName: "Sreekanth Reddy", branch: "Computer Science", yearOfStudy: 4, rating: 5,
         title: "One of the best NITs, period",
         body: "NITW is consistently in the top 5 NITs and it shows. CS department placements are excellent. Faculty has a good mix of experienced professors and younger ones who are up to date. Campus is massive, has its own lake. The only downside is Warangal city does not offer much.",
-        category: "overall",
-        isAnonymous: false,
+        category: "overall", isAnonymous: false,
       },
       {
-        studentName: "Anjali Kumari",
-        branch: "Electronics & Communication",
-        yearOfStudy: 3,
-        rating: 4,
+        studentName: "Anjali Kumari", branch: "Electronics & Communication", yearOfStudy: 3, rating: 4,
         title: "Labs are well maintained",
         body: "ECE labs here are genuinely good. We have proper equipment for VLSI, embedded systems, everything. The department encourages research, and a few profs have active projects you can contribute to. Workshops happen regularly. Placements for ECE are also strong compared to other NITs.",
-        category: "lab",
-        isAnonymous: false,
+        category: "lab", isAnonymous: false,
       },
       {
-        studentName: "Anonymous",
-        branch: "Chemical Engineering",
-        yearOfStudy: 2,
-        rating: 3,
+        studentName: "Anonymous", branch: "Chemical Engineering", yearOfStudy: 2, rating: 3,
         title: "Good campus, average branch prospects",
         body: "The campus is beautiful, no complaints there. Hostel life is decent, food is okay. But Chemical Engineering placements are not great. Most of us are either prepping for GATE, shifting to IT, or aiming for PSUs. The department itself is fine, just limited industry demand.",
-        category: "placement",
-        isAnonymous: true,
+        category: "placement", isAnonymous: true,
+      },
+    ],
+    "BITS Pilani": [
+      {
+        studentName: "Rohan Kapoor", branch: "Computer Science", yearOfStudy: 3, rating: 5,
+        title: "Freedom and flexibility like nowhere else",
+        body: "BITS gives you insane freedom with your coursework. You can take courses from any department, do a dual degree, switch branches if your grades are good. The coding culture here rivals IITs. Placements are amazing for CS. Pilani the town is boring, but campus life more than makes up for it.",
+        category: "overall", isAnonymous: false,
+      },
+      {
+        studentName: "Anonymous", branch: "Mechanical Engineering", yearOfStudy: 4, rating: 4,
+        title: "BITSAT score was worth it",
+        body: "Even for non-CS branches, BITS is a solid pick. The Practice School program gives you real industry exposure. Mech placements are decent, and a lot of people switch to software roles through electives and projects. Hostels are good, food is fine, campus is well maintained.",
+        category: "placement", isAnonymous: true,
+      },
+      {
+        studentName: "Sneha Joshi", branch: "Pharmacy", yearOfStudy: 2, rating: 3,
+        title: "Pharmacy at BITS is underrated but overlooked",
+        body: "Not many people know BITS has a pharmacy program. The department is small but well-equipped. The dual degree option lets you pair it with another branch which opens more doors. Campus facilities are shared with everyone so you get the full BITS experience regardless of your department.",
+        category: "department", isAnonymous: false,
+      },
+    ],
+    "AIIMS Delhi": [
+      {
+        studentName: "Dr. Priya Malhotra", branch: "MBBS", yearOfStudy: 4, rating: 5,
+        title: "Best medical education in India, hands down",
+        body: "There is no other place in India where you get this level of clinical exposure during MBBS itself. The professors are legends in their fields. Patient volume is massive so you learn fast. Hostel life is intense because everyone is studying all the time. But the bond between batchmates is strong.",
+        category: "overall", isAnonymous: false,
+      },
+      {
+        studentName: "Anonymous", branch: "MBBS", yearOfStudy: 2, rating: 4,
+        title: "Hostel could be better for the name",
+        body: "For the most prestigious medical college in the country, the hostel infrastructure is surprisingly average. Rooms are okay, mess food is hit or miss. But honestly nobody comes to AIIMS for the hostel. The academic and clinical experience is unmatched. Libraries are open 24/7 and always full.",
+        category: "hostel", isAnonymous: true,
+      },
+      {
+        studentName: "Rahul Sharma", branch: "MBBS", yearOfStudy: 3, rating: 5,
+        title: "Research opportunities are incredible",
+        body: "If you are into research, AIIMS Delhi is the place. Professors actively involve students in papers and projects. There are conferences happening constantly. The labs are world-class. Getting into AIIMS through NEET is brutally hard but once you are here, every door is open.",
+        category: "lab", isAnonymous: false,
+      },
+    ],
+    "JIPMER Puducherry": [
+      {
+        studentName: "Ananya Rao", branch: "MBBS", yearOfStudy: 3, rating: 4,
+        title: "Excellent clinical training, peaceful campus",
+        body: "JIPMER is one of those places where the focus is really on making you a good doctor. The patient load is high which means plenty of hands-on practice. Faculty is experienced and most of them are approachable. Puducherry as a city is quiet and affordable. Good place to study without distractions.",
+        category: "overall", isAnonymous: false,
+      },
+      {
+        studentName: "Anonymous", branch: "MBBS", yearOfStudy: 2, rating: 4,
+        title: "Fees are practically nothing",
+        body: "One of the biggest advantages of JIPMER is the fees. For a government medical college of this caliber, you are paying almost nothing. The education quality is comparable to AIIMS in many departments. Campus is old but well maintained. The beach is 15 minutes away which is a nice bonus.",
+        category: "campus", isAnonymous: true,
+      },
+      {
+        studentName: "Karthik V", branch: "MBBS", yearOfStudy: 4, rating: 4,
+        title: "NEET rank was totally worth it",
+        body: "I had a decent NEET rank and chose JIPMER over some private colleges offering fancier infrastructure. No regrets. The teaching methodology here is thorough, the departments collaborate well, and the alumni network in south India is very strong. Placements and PG prep are both well supported.",
+        category: "department", isAnonymous: false,
       },
     ],
   };
@@ -341,55 +380,71 @@ function getReviewsForCollege(collegeId, collegeName) {
   return reviews.map((r) => ({ ...r, collegeId }));
 }
 
-// Rank data based on approximate JoSAA/real cutoff patterns
+// Multi-exam rank data: JEE Main for NITs/DTU, JEE Advanced for top IITs (represented
+// via BITS here), BITSAT for BITS, NEET for medical colleges
 function getRankDataForCollege(collegeId, collegeName) {
   const rankSets = {
     "NIT Srinagar": [
-      { year: 2024, branch: "Computer Science", openingRank: 15200, closingRank: 26800, quota: "general", roundNumber: 6 },
-      { year: 2024, branch: "Electronics & Communication", openingRank: 24000, closingRank: 38500, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Computer Science", openingRank: 14800, closingRank: 27500, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Electronics & Communication", openingRank: 23500, closingRank: 39000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Computer Science", openingRank: 16000, closingRank: 28000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Electronics & Communication", openingRank: 25000, closingRank: 40000, quota: "general", roundNumber: 6 },
-    ],
-    "NIT Hamirpur": [
-      { year: 2024, branch: "Computer Science", openingRank: 14500, closingRank: 24000, quota: "general", roundNumber: 6 },
-      { year: 2024, branch: "Electronics & Communication", openingRank: 22000, closingRank: 36000, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Computer Science", openingRank: 15000, closingRank: 25000, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Electronics & Communication", openingRank: 23000, closingRank: 37000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Computer Science", openingRank: 15500, closingRank: 26000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Electronics & Communication", openingRank: 24000, closingRank: 38000, quota: "general", roundNumber: 6 },
-    ],
-    "MNIT Jaipur": [
-      { year: 2024, branch: "Computer Science", openingRank: 5200, closingRank: 10800, quota: "general", roundNumber: 6 },
-      { year: 2024, branch: "Electronics & Communication", openingRank: 9500, closingRank: 16500, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Computer Science", openingRank: 5500, closingRank: 11200, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Electronics & Communication", openingRank: 10000, closingRank: 17000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Computer Science", openingRank: 5800, closingRank: 11500, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Electronics & Communication", openingRank: 10500, closingRank: 17500, quota: "general", roundNumber: 6 },
-    ],
-    "DTU Delhi": [
-      { year: 2024, branch: "Computer Science", openingRank: 1200, closingRank: 4500, quota: "general", roundNumber: 6 },
-      { year: 2024, branch: "Information Technology", openingRank: 3800, closingRank: 7200, quota: "general", roundNumber: 6 },
-      { year: 2024, branch: "Software Engineering", openingRank: 2000, closingRank: 5500, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Computer Science", openingRank: 1400, closingRank: 4800, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Information Technology", openingRank: 4000, closingRank: 7500, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Computer Science", openingRank: 1500, closingRank: 5000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Information Technology", openingRank: 4200, closingRank: 7800, quota: "general", roundNumber: 6 },
-    ],
-    "NIT Warangal": [
-      { year: 2024, branch: "Computer Science", openingRank: 3500, closingRank: 8200, quota: "general", roundNumber: 6 },
-      { year: 2024, branch: "Electronics & Communication", openingRank: 7800, closingRank: 14500, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Computer Science", openingRank: 3800, closingRank: 8500, quota: "general", roundNumber: 6 },
-      { year: 2023, branch: "Electronics & Communication", openingRank: 8000, closingRank: 15000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Computer Science", openingRank: 4000, closingRank: 9000, quota: "general", roundNumber: 6 },
-      { year: 2022, branch: "Electronics & Communication", openingRank: 8500, closingRank: 15500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2025, branch: "Computer Science", openingRank: 14800, closingRank: 26200, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2025, branch: "Electronics & Communication", openingRank: 23500, closingRank: 37800, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Computer Science", openingRank: 15200, closingRank: 26800, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Electronics & Communication", openingRank: 24000, closingRank: 38500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2023, branch: "Computer Science", openingRank: 16000, closingRank: 28000, quota: "general", roundNumber: 6 },
     ],
     "IUST Awantipora": [
-      { year: 2024, branch: "Computer Science", openingRank: 45000, closingRank: 78000, quota: "general", roundNumber: 3 },
-      { year: 2024, branch: "Electronics & Communication", openingRank: 52000, closingRank: 85000, quota: "general", roundNumber: 3 },
-      { year: 2023, branch: "Computer Science", openingRank: 48000, closingRank: 80000, quota: "general", roundNumber: 3 },
-      { year: 2023, branch: "Electronics & Communication", openingRank: 55000, closingRank: 88000, quota: "general", roundNumber: 3 },
+      { exam: "jee_main", year: 2025, branch: "Computer Science", openingRank: 44000, closingRank: 76000, quota: "general", roundNumber: 3 },
+      { exam: "jee_main", year: 2025, branch: "Electronics & Communication", openingRank: 51000, closingRank: 83000, quota: "general", roundNumber: 3 },
+      { exam: "jee_main", year: 2024, branch: "Computer Science", openingRank: 45000, closingRank: 78000, quota: "general", roundNumber: 3 },
+    ],
+    "NIT Hamirpur": [
+      { exam: "jee_main", year: 2025, branch: "Computer Science", openingRank: 14000, closingRank: 23500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2025, branch: "Electronics & Communication", openingRank: 21500, closingRank: 35500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Computer Science", openingRank: 14500, closingRank: 24000, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Electronics & Communication", openingRank: 22000, closingRank: 36000, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2023, branch: "Computer Science", openingRank: 15500, closingRank: 26000, quota: "general", roundNumber: 6 },
+    ],
+    "MNIT Jaipur": [
+      { exam: "jee_main", year: 2025, branch: "Computer Science", openingRank: 5000, closingRank: 10500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2025, branch: "Electronics & Communication", openingRank: 9200, closingRank: 16200, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Computer Science", openingRank: 5200, closingRank: 10800, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Electronics & Communication", openingRank: 9500, closingRank: 16500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2023, branch: "Computer Science", openingRank: 5800, closingRank: 11500, quota: "general", roundNumber: 6 },
+    ],
+    "DTU Delhi": [
+      { exam: "jee_main", year: 2025, branch: "Computer Science", openingRank: 1100, closingRank: 4200, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2025, branch: "Information Technology", openingRank: 3600, closingRank: 7000, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2025, branch: "Software Engineering", openingRank: 1900, closingRank: 5300, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Computer Science", openingRank: 1200, closingRank: 4500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Information Technology", openingRank: 3800, closingRank: 7200, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2023, branch: "Computer Science", openingRank: 1500, closingRank: 5000, quota: "general", roundNumber: 6 },
+    ],
+    "NIT Warangal": [
+      { exam: "jee_main", year: 2025, branch: "Computer Science", openingRank: 3300, closingRank: 8000, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2025, branch: "Electronics & Communication", openingRank: 7500, closingRank: 14200, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Computer Science", openingRank: 3500, closingRank: 8200, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2024, branch: "Electronics & Communication", openingRank: 7800, closingRank: 14500, quota: "general", roundNumber: 6 },
+      { exam: "jee_main", year: 2023, branch: "Computer Science", openingRank: 4000, closingRank: 9000, quota: "general", roundNumber: 6 },
+    ],
+    "BITS Pilani": [
+      { exam: "bitsat", year: 2025, branch: "Computer Science", openingRank: 1, closingRank: 310, quota: "general", roundNumber: 3 },
+      { exam: "bitsat", year: 2025, branch: "Electronics & Instrumentation", openingRank: 280, closingRank: 340, quota: "general", roundNumber: 3 },
+      { exam: "bitsat", year: 2025, branch: "Mechanical Engineering", openingRank: 320, closingRank: 370, quota: "general", roundNumber: 3 },
+      { exam: "bitsat", year: 2024, branch: "Computer Science", openingRank: 1, closingRank: 305, quota: "general", roundNumber: 3 },
+      { exam: "bitsat", year: 2024, branch: "Electronics & Instrumentation", openingRank: 275, closingRank: 335, quota: "general", roundNumber: 3 },
+      { exam: "bitsat", year: 2023, branch: "Computer Science", openingRank: 1, closingRank: 298, quota: "general", roundNumber: 3 },
+    ],
+    "AIIMS Delhi": [
+      { exam: "neet", year: 2025, branch: "MBBS", openingRank: 1, closingRank: 65, quota: "general", roundNumber: 3 },
+      { exam: "neet", year: 2024, branch: "MBBS", openingRank: 1, closingRank: 70, quota: "general", roundNumber: 3 },
+      { exam: "neet", year: 2024, branch: "MBBS", openingRank: 1, closingRank: 200, quota: "obc", roundNumber: 3 },
+      { exam: "neet", year: 2023, branch: "MBBS", openingRank: 1, closingRank: 75, quota: "general", roundNumber: 3 },
+      { exam: "neet", year: 2025, branch: "Nursing", openingRank: 5000, closingRank: 15000, quota: "general", roundNumber: 2 },
+    ],
+    "JIPMER Puducherry": [
+      { exam: "neet", year: 2025, branch: "MBBS", openingRank: 50, closingRank: 350, quota: "general", roundNumber: 3 },
+      { exam: "neet", year: 2024, branch: "MBBS", openingRank: 55, closingRank: 380, quota: "general", roundNumber: 3 },
+      { exam: "neet", year: 2023, branch: "MBBS", openingRank: 60, closingRank: 400, quota: "general", roundNumber: 3 },
+      { exam: "neet", year: 2025, branch: "Nursing", openingRank: 8000, closingRank: 25000, quota: "general", roundNumber: 2 },
     ],
   };
 
@@ -403,95 +458,73 @@ function getQuestionsForCollege(collegeId, collegeName) {
       {
         questionText: "How bad are the internet issues on campus? I heard there are frequent shutdowns.",
         isAnonymous: true,
-        answers: [
-          {
-            text: "It has improved a lot in the last year or so. There are still occasional disruptions but nothing like 2019-2020. Most of the time you can manage fine for assignments and online stuff.",
-            respondentName: "Farhan Sheikh",
-          },
-        ],
+        answers: [{ text: "It has improved a lot in the last year or so. There are still occasional disruptions but nothing like 2019-2020. Most of the time you can manage fine for assignments and online stuff.", respondentName: "Farhan Sheikh" }],
       },
       {
         questionText: "Is it safe for students from other states? I am from UP and considering NITSRI.",
-        isAnonymous: false,
-        askedBy: "Vikram",
-        answers: [
-          {
-            text: "Absolutely. A big chunk of the student body is from outside J&K. I am from Bihar and never had any issues. People here are welcoming. Just pack warm clothes, the cold is the real challenge.",
-            respondentName: "Amit Kumar",
-          },
-        ],
+        isAnonymous: false, askedBy: "Vikram",
+        answers: [{ text: "Absolutely. A big chunk of the student body is from outside J&K. I am from Bihar and never had any issues. People here are welcoming. Just pack warm clothes, the cold is the real challenge.", respondentName: "Amit Kumar" }],
       },
     ],
     "MNIT Jaipur": [
       {
         questionText: "How is the startup culture at MNIT? Are there incubation facilities?",
         isAnonymous: true,
-        answers: [
-          {
-            text: "There is an incubation center and a few student-run startups. It is not IIT-level ecosystem but for an NIT it is decent. Being in Jaipur helps because there are startup events in the city regularly.",
-            respondentName: "Ankit Joshi",
-          },
-        ],
+        answers: [{ text: "There is an incubation center and a few student-run startups. It is not IIT-level ecosystem but for an NIT it is decent. Being in Jaipur helps because there are startup events in the city regularly.", respondentName: "Ankit Joshi" }],
       },
     ],
     "DTU Delhi": [
       {
         questionText: "Is the hostel situation really that bad? Should I look for a PG instead?",
         isAnonymous: true,
-        answers: [
-          {
-            text: "If you are from outside Delhi, you will likely get a hostel. The rooms are basic, doubles, and the newer blocks have AC. PGs nearby are pricey because Rohini is not cheap. I would say take the hostel if you can.",
-            respondentName: "Riya Gupta",
-          },
-        ],
+        answers: [{ text: "If you are from outside Delhi, you will likely get a hostel. The rooms are basic, doubles, and the newer blocks have AC. PGs nearby are pricey because Rohini is not cheap. I would say take the hostel if you can.", respondentName: "Riya Gupta" }],
       },
       {
         questionText: "How are placements for IT branch specifically? Is it as good as CS?",
-        isAnonymous: false,
-        askedBy: "Sahil",
-        answers: [
-          {
-            text: "IT placements are very close to CS. The difference is maybe 1-2 LPA in median package. Most companies that come for CS also allow IT students to sit. You will not regret taking IT at DTU.",
-            respondentName: "Naman Verma",
-          },
-        ],
+        isAnonymous: false, askedBy: "Sahil",
+        answers: [{ text: "IT placements are very close to CS. The difference is maybe 1-2 LPA in median package. Most companies that come for CS also allow IT students to sit. You will not regret taking IT at DTU.", respondentName: "Naman Verma" }],
       },
     ],
     "NIT Warangal": [
       {
         questionText: "How is the food on campus? I have dietary restrictions (vegetarian).",
         isAnonymous: true,
-        answers: [
-          {
-            text: "Mess food has both veg and non-veg options. The veg food is honestly better than the non-veg most days. There are also a bunch of canteens around campus if you want variety. You will be fine as a vegetarian.",
-            respondentName: "Preethi Rao",
-          },
-        ],
+        answers: [{ text: "Mess food has both veg and non-veg options. The veg food is honestly better than the non-veg most days. There are also a bunch of canteens around campus if you want variety. You will be fine as a vegetarian.", respondentName: "Preethi Rao" }],
       },
     ],
     "NIT Hamirpur": [
       {
         questionText: "Is the placement cell active for off-campus opportunities too?",
-        isAnonymous: false,
-        askedBy: "Deepak",
-        answers: [
-          {
-            text: "The placement cell mostly handles on-campus drives. For off-campus, you are on your own, but seniors share referral links and job postings in WhatsApp groups. The alumni network for CS is getting stronger every year.",
-            respondentName: "Tanmay Bhatt",
-          },
-        ],
+        isAnonymous: false, askedBy: "Deepak",
+        answers: [{ text: "The placement cell mostly handles on-campus drives. For off-campus, you are on your own, but seniors share referral links and job postings in WhatsApp groups. The alumni network for CS is getting stronger every year.", respondentName: "Tanmay Bhatt" }],
       },
     ],
     "IUST Awantipora": [
       {
         questionText: "Is it worth joining IUST for B.Tech or should I try for NIT through JoSAA?",
         isAnonymous: true,
-        answers: [
-          {
-            text: "If you have a shot at any NIT, take it. But if IUST is your best option, it is not a bad choice at all. The CS program is solid, and the university is improving every year. Just make sure you do projects and internships on your own.",
-            respondentName: "Aisha Wani",
-          },
-        ],
+        answers: [{ text: "If you have a shot at any NIT, take it. But if IUST is your best option, it is not a bad choice at all. The CS program is solid, and the university is improving every year. Just make sure you do projects and internships on your own.", respondentName: "Aisha Wani" }],
+      },
+    ],
+    "BITS Pilani": [
+      {
+        questionText: "How hard is BITSAT compared to JEE Main? Can I prep for both?",
+        isAnonymous: true,
+        answers: [{ text: "BITSAT is faster paced but conceptually similar to JEE Main. The syllabus overlaps a lot. If you are prepping for JEE, just do some BITSAT mock tests and you will be fine. English and logical reasoning are easy bonus sections if you practice.", respondentName: "Arjun Mehta" }],
+      },
+    ],
+    "AIIMS Delhi": [
+      {
+        questionText: "What NEET rank is realistically needed for AIIMS Delhi MBBS general category?",
+        isAnonymous: true,
+        answers: [{ text: "You need to be in the top 50-70 ranks for general category. It is extremely competitive. OBC cutoff goes up to around 200. Basically you need to be in the top 0.01% of NEET takers. Prepare accordingly and have backup options.", respondentName: "Dr. Sneha Reddy" }],
+      },
+    ],
+    "JIPMER Puducherry": [
+      {
+        questionText: "Is JIPMER Puducherry as good as AIIMS for clinical exposure?",
+        isAnonymous: false, askedBy: "Meera",
+        answers: [{ text: "JIPMER gets a huge patient volume from Tamil Nadu and Puducherry. Clinical exposure is excellent, comparable to AIIMS in many departments. Where AIIMS has an edge is in research funding and name recognition. But for pure clinical training, JIPMER is top tier.", respondentName: "Dr. Arun Kumar" }],
       },
     ],
   };
@@ -505,18 +538,16 @@ async function seed() {
     await mongoose.connect(MONGODB_URI);
     console.log("Connected to MongoDB");
 
-    // Clear existing data
     await College.deleteMany({});
     await Review.deleteMany({});
     await RankData.deleteMany({});
     await Question.deleteMany({});
+    await User.deleteMany({});
     console.log("Cleared existing data");
 
-    // Insert colleges
     const createdColleges = await College.insertMany(colleges);
     console.log(`Inserted ${createdColleges.length} colleges`);
 
-    // Insert reviews, rank data, and questions for each college
     let totalReviews = 0;
     let totalRankData = 0;
     let totalQuestions = 0;
