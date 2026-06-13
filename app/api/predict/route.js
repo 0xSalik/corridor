@@ -1,6 +1,5 @@
-// API route for college prediction based on rank, quota, and branch.
-// Matches against historical cutoff data and returns colleges where the
-// student's rank falls within the closing rank range.
+// Predict API: matches a student's rank/score against historical cutoff data
+// for a specific entrance exam. Supports jee_main, jee_advanced, neet, bitsat.
 
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
@@ -11,12 +10,21 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const rank = parseInt(searchParams.get("rank"));
+    const exam = searchParams.get("exam") || "jee_main";
     const quota = searchParams.get("quota") || "general";
     const branch = searchParams.get("branch");
 
     if (!rank || isNaN(rank) || rank < 1) {
       return NextResponse.json(
         { error: "A valid rank (positive number) is required" },
+        { status: 400 }
+      );
+    }
+
+    const validExams = ["jee_main", "jee_advanced", "neet", "bitsat"];
+    if (!validExams.includes(exam)) {
+      return NextResponse.json(
+        { error: `exam must be one of: ${validExams.join(", ")}` },
         { status: 400 }
       );
     }
@@ -32,6 +40,7 @@ export async function GET(request) {
     await connectDB();
 
     const filter = {
+      exam,
       closingRank: { $gte: rank },
       quota,
     };
@@ -44,7 +53,6 @@ export async function GET(request) {
       .sort({ year: -1 })
       .lean();
 
-    // Group by college and pick the most recent year's data
     const collegeMap = {};
     for (const entry of rankEntries) {
       const key = `${entry.collegeId}-${entry.branch}`;
@@ -55,7 +63,6 @@ export async function GET(request) {
 
     const predictions = Object.values(collegeMap);
 
-    // Fetch college names for the results
     const collegeIds = [...new Set(predictions.map((p) => p.collegeId))];
     const colleges = await College.find({ _id: { $in: collegeIds } })
       .select("name city state type")
