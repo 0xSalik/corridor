@@ -1,4 +1,4 @@
-// About page: static page explaining what Corridor is and who built it.
+// About page: explains what Corridor is, lists features, and shows the team.
 
 export default function AboutPage() {
   return (
@@ -25,11 +25,33 @@ export default function AboutPage() {
         </p>
 
         <p>
-          This project is still early. We are building it out in stages, adding
-          more features as we go. Right now you can browse colleges, read
-          reviews, and check out basic placement data. Predictions based on your
-          rank, question boards, and detailed college pages are coming next.
+          Corridor supports two kinds of users. If you are a current college
+          student, you can sign up and share reviews about your college,
+          answer questions from prospective students, and rate departments.
+          If you are still exploring colleges, you can browse everything,
+          ask questions anonymously, and use the predictor tool to check which
+          colleges match your entrance exam rank.
         </p>
+      </div>
+
+      {/* Features */}
+      <div className="mt-12">
+        <h2 className="text-2xl mb-5">What you can do here</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            { title: "Explore colleges", desc: "Browse real data on NITs, IITs, state universities, and private colleges across India." },
+            { title: "Read student reviews", desc: "Filter by category: hostel, departments, placements, labs, campus life." },
+            { title: "Ask questions", desc: "Post questions about any college. Current students and alumni can answer." },
+            { title: "Predict your college", desc: "Enter your JEE Main, JEE Advanced, NEET, or BITSAT rank to see where you stand." },
+            { title: "Two account types", desc: "Sign up as a current student to write reviews, or as an aspirant to explore and predict." },
+            { title: "Real cutoff data", desc: "Predictions are based on actual closing ranks from previous years of counselling rounds." },
+          ].map((feature) => (
+            <div key={feature.title} className="border border-[var(--color-border)] rounded-lg p-4 bg-[var(--color-card)]">
+              <p className="font-[family-name:var(--font-heading)] font-semibold mb-1">{feature.title}</p>
+              <p className="text-sm text-[var(--color-muted)]">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Team section */}
@@ -39,22 +61,22 @@ export default function AboutPage() {
           {[
             {
               name: "Salik Khan",
-              role: "Backend, API routes, database models, seed data",
+              role: "Backend, API routes, database models, auth system, seed data",
               email: "contact@salikkhan.com",
             },
             {
               name: "Aayat Mir",
-              role: "Homepage UI, CollegeCard component",
+              role: "Homepage, CollegeCard, College detail page, ReviewForm, PredictionTable",
               email: "miraayat2025@gmail.com",
             },
             {
               name: "Filzah Fida",
-              role: "Navbar, Explore page",
+              role: "Navbar, Explore page, Ask page, Login/Signup pages, mobile responsiveness",
               email: "filzafida68@gmail.com",
             },
             {
               name: "Mutaf Zehra",
-              role: "About page",
+              role: "About page, UI polish",
               email: "mutaafzehra@gmail.com",
             },
           ].map((member) => (
