@@ -1,13 +1,13 @@
-// Homepage: intro text, search bar UI, and a row of featured college cards.
+// Homepage: intro, working search bar that redirects to explore, and featured colleges.
 
+import Link from "next/link";
 import CollegeCard from "@/components/CollegeCard";
+import HomeSearch from "@/components/HomeSearch";
 
 async function getFeaturedColleges() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/colleges`, {
-      cache: "no-store",
-    });
+    const res = await fetch(`${baseUrl}/api/colleges`, { cache: "no-store" });
     if (!res.ok) return [];
     const colleges = await res.json();
     return colleges.slice(0, 4);
@@ -33,19 +33,22 @@ export default async function HomePage() {
         </p>
       </div>
 
-      {/* Search bar (UI only for now) */}
+      {/* Search bar */}
       <div className="mb-12">
-        <div className="relative max-w-xl">
-          <input
-            type="text"
-            placeholder="Search for a college, city, or branch..."
-            className="w-full px-5 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-foreground)] placeholder-[var(--color-muted)] focus:outline-none focus:border-[var(--color-accent)] transition-colors"
-            disabled
-          />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] text-sm">
-            Coming soon
-          </span>
-        </div>
+        <HomeSearch />
+      </div>
+
+      {/* Quick links */}
+      <div className="flex flex-wrap gap-3 mb-12">
+        <Link href="/explore" className="text-sm px-4 py-2 rounded-lg border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-colors">
+          Browse all colleges
+        </Link>
+        <Link href="/predict" className="text-sm px-4 py-2 rounded-lg border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-colors">
+          Predict your college
+        </Link>
+        <Link href="/ask" className="text-sm px-4 py-2 rounded-lg border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-colors">
+          Ask current students
+        </Link>
       </div>
 
       {/* Featured colleges */}
