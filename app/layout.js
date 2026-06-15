@@ -1,6 +1,7 @@
-// Root layout: loads Google Fonts (Lora + DM Sans), renders Navbar on all pages.
+// Root layout: loads Google Fonts (Lora + DM Sans), wraps with AuthProvider, renders Navbar.
 
 import { Lora, DM_Sans } from "next/font/google";
+import { AuthProvider } from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import "@/styles/globals.css";
 
@@ -26,8 +27,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${lora.variable} ${dmSans.variable}`}>
       <body className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );
