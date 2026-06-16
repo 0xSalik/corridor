@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Custom color tokens and font references for the Corridor theme */
 @theme inline {
   --color-background: #f7f6f3;
   --color-foreground: #2c2c2c;
@@ -26,6 +25,7 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-body);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4 {
@@ -37,4 +37,30 @@ h1, h2, h3, h4 {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Smooth transitions for interactive elements */
+button, a, input, select, textarea {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Form element focus ring */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 2px rgba(74, 102, 112, 0.15);
+}
+
+/* Table styling for prediction results */
+table {
+  border-collapse: collapse;
+}
+
+/* Scrollbar styling for overflow containers */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive text scaling */
+@media (max-width: 640px) {
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.375rem; }
 }
