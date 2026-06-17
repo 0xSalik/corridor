@@ -21,13 +21,13 @@ This is a 4th semester Basic Web Technologies project built with Next.js, MongoD
    ```bash
    cp .env.local.example .env.local
    ```
-   Edit `.env.local` and add your MongoDB connection string. You can use a local MongoDB instance or a free MongoDB Atlas cluster.
+   Edit `.env.local` and add your MongoDB connection string and a JWT secret. You can use a local MongoDB instance or a free MongoDB Atlas cluster.
 
 4. **Seed the database**
    ```bash
    npm run seed
    ```
-   This populates the database with sample colleges, reviews, rank data, and questions.
+   This populates the database with sample colleges (NITs, DTU, BITS Pilani, AIIMS, JIPMER), reviews, multi-exam rank data, and questions.
 
 5. **Run the dev server**
    ```bash
@@ -35,82 +35,110 @@ This is a 4th semester Basic Web Technologies project built with Next.js, MongoD
    ```
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## Features
+
+### Authentication
+- Multi-step signup with role selection (current student or aspirant)
+- Students provide their college, branch, and year
+- Aspirants can enter exam scores: JEE Main percentile, JEE Advanced rank, NEET marks/rank, BITSAT score
+- Category/quota selection (General, OBC, SC, ST, EWS)
+- JWT-based session with HTTP-only cookies
+- Login, logout, and persistent auth state across pages
+
+### College Exploration
+- Browse all colleges with type (public/private/deemed) and city filters
+- Filters sync to URL query params so filtered views are shareable
+- Working search bar on the homepage that redirects to the explore page
+- Click any college to see full details with tabbed interface
+
+### College Detail Page
+- Overview tab with about text and facilities
+- Departments tab with ratings and review counts
+- Reviews tab with category filter, review cards, and a review submission form
+- Questions tab with existing Q&A and inline answer submission
+
+### Reviews
+- Submit reviews with branch, year, rating, category, title, and body
+- Option to post anonymously
+- Filter reviews by category (hostel, department, placement, overall, lab, campus)
+
+### Questions and Answers
+- Dedicated Ask page to browse and post questions for any college
+- Post questions anonymously or with your name
+- Answer any question inline with an expandable form
+
+### College Predictor
+- Supports four entrance exams: JEE Main, JEE Advanced, NEET, BITSAT
+- Enter your rank/score, category, and optional branch filter
+- Results table showing matching colleges with opening/closing ranks from previous years
+- Based on real cutoff patterns from 2023, 2024, and 2025 counselling data
+
+### Mobile Responsive
+- Hamburger menu on mobile with animated transitions
+- All pages, forms, and tables work well on smaller screens
+- Responsive grid layouts for college cards and form fields
+
 ## Team
 
 | Name | Role | Contact |
 |------|------|---------|
-| Salik Khan | Backend: models, API routes, seed script, DB setup | contact@salikkhan.com |
-| Aayat Mir | Frontend: Homepage, CollegeCard component | miraayat2025@gmail.com |
-| Filzah Fida | Frontend: Navbar, Explore page | filzafida68@gmail.com |
-| Mutaf Zehra | Frontend: About page | mutaafzehra@gmail.com |
+| Salik Khan | Backend: models, API routes, auth system, seed script, DB setup | contact@salikkhan.com |
+| Aayat Mir | Frontend: Homepage, CollegeCard, College detail page, ReviewForm, PredictionTable | miraayat2025@gmail.com |
+| Filzah Fida | Frontend: Navbar, Explore page, Ask page, Login/Signup pages, mobile responsiveness | filzafida68@gmail.com |
+| Mutaf Zehra | Frontend: About page, UI polish | mutaafzehra@gmail.com |
 
 ## Tech Used
 
-- **Next.js** (App Router) with React for the frontend and API routes
+- **Next.js 16** (App Router) with React 19 for frontend and API routes
 - **MongoDB** with Mongoose for the database
-- **Tailwind CSS** for styling
+- **Tailwind CSS v4** for styling
 - **Google Fonts** (Lora + DM Sans) for typography
+- **bcryptjs** for password hashing
+- **jsonwebtoken** for JWT-based authentication
 
 ## Project Structure
 
 ```
 app/
-  page.jsx                    Homepage
-  explore/page.jsx            Explore all colleges
-  about/page.jsx              About page (static)
-  college/[id]/page.jsx       College detail (TODO)
-  predict/page.jsx            Predictor (TODO)
-  ask/page.jsx                Ask questions (TODO)
+  layout.js                     Root layout with AuthProvider and Navbar
+  page.jsx                      Homepage with search and featured colleges
+  login/page.jsx                Login page
+  signup/page.jsx               Multi-step signup with exam scores
+  explore/page.jsx              Browse colleges with filters and query params
+  about/page.jsx                About page with features and team
+  college/[id]/page.jsx         College detail with tabs
+  predict/page.jsx              Multi-exam predictor with results table
+  ask/page.jsx                  Question browsing and posting
   api/
-    colleges/route.js         GET all, POST new
-    colleges/[id]/route.js    GET by ID
-    reviews/route.js          GET + POST reviews
-    questions/route.js        GET + POST questions
-    questions/[id]/answer/    POST answer
-    predict/route.js          GET predictions
+    auth/
+      signup/route.js           Create account with role and exam scores
+      login/route.js            Authenticate and set cookie
+      logout/route.js           Clear auth cookie
+      me/route.js               Get current user from cookie
+    colleges/route.js           GET all, POST new
+    colleges/[id]/route.js      GET by ID
+    reviews/route.js            GET + POST reviews
+    questions/route.js          GET + POST questions
+    questions/[id]/answer/      POST answer
+    predict/route.js            GET predictions by exam, rank, quota
 components/
-  Navbar.jsx                  Top navigation
-  CollegeCard.jsx             College summary card
+  AuthProvider.jsx              Auth context with login/signup/logout
+  Navbar.jsx                    Top nav with auth state and mobile menu
+  HomeSearch.jsx                Search bar that redirects to explore
+  CollegeCard.jsx               College summary card
+  ReviewCard.jsx                Single review display
+  ReviewForm.jsx                Review submission form
+  QuestionItem.jsx              Question with answers and answer form
+  PredictionTable.jsx           Prediction results table
 lib/
-  mongodb.js                  DB connection utility
+  mongodb.js                    DB connection with caching
+  auth.js                       JWT helpers and cookie config
 models/
-  College.js                  College schema
-  Review.js                   Review schema
-  RankData.js                 Rank cutoff schema
-  Question.js                 Question + answers schema
+  User.js                       User with roles and exam scores
+  College.js                    College schema
+  Review.js                     Review schema
+  RankData.js                   Multi-exam rank cutoff schema
+  Question.js                   Question + answers schema
 scripts/
-  seed.js                     Database seed script
+  seed.js                       Seeds 9 colleges with multi-exam data
 ```
-
-## What is Done (Stage 1)
-
-- All four MongoDB models (College, Review, RankData, Question)
-- All API routes with input validation and error handling
-- MongoDB connection utility with caching
-- Seed script with 6 real Indian colleges and realistic data
-- Homepage with featured colleges fetched from the API
-- Explore page with college grid and type filter
-- About page (static)
-- Navbar and CollegeCard components
-- Consistent UI with custom color palette and typography
-
-## TODO (Stage 2)
-
-These are planned for the next stage of development:
-
-- College Detail Page (`/college/[id]`) with tabs for overview, departments, and reviews
-- Review submission form on the college detail page so students can add their own reviews
-- Ask a Question page (`/ask`) with question browsing and anonymous submission
-- ReviewCard component for rendering individual reviews
-- QuestionItem component for rendering questions with their answers
-- Connect the Explore page filter to actual URL query params so filtered views are shareable
-
-## TODO (Stage 3)
-
-These come after Stage 2 is done:
-
-- Prediction Page (`/predict`) with a form for rank, quota, and branch, showing matching colleges in a table
-- PredictionTable component to display prediction results
-- Answer submission UI on the question detail view
-- Full mobile responsiveness pass across all pages
-- Any remaining UI polish and bug fixes
