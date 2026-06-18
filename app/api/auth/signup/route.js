@@ -1,4 +1,4 @@
-// Signup route: creates a new user with role, exam scores, and sets JWT cookie.
+// Signup route: creates a new user with role-specific fields and sets JWT cookie.
 
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
@@ -31,6 +31,13 @@ export async function POST(request) {
       );
     }
 
+    if (role === "student" && !body.collegeId) {
+      return NextResponse.json(
+        { error: "Students must select a college" },
+        { status: 400 }
+      );
+    }
+
     await connectDB();
 
     const existing = await User.findOne({ email: email.toLowerCase() });
@@ -44,12 +51,12 @@ export async function POST(request) {
     const userData = { name, email, password, role };
 
     if (role === "student") {
-      userData.college = body.college || "";
+      userData.collegeId = body.collegeId;
       userData.branch = body.branch || "";
       userData.yearOfStudy = body.yearOfStudy || null;
     }
 
-    if (body.examScores) {
+    if (role === "aspirant" && body.examScores) {
       userData.examScores = body.examScores;
     }
 
@@ -64,6 +71,7 @@ export async function POST(request) {
           name: user.name,
           email: user.email,
           role: user.role,
+          collegeId: user.collegeId || null,
         },
       },
       { status: 201 }
