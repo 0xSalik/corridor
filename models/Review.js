@@ -1,4 +1,6 @@
 // Review model: student reviews linked to a college, categorized by topic.
+// Reviews with category "department" or "faculty" can specify a departmentName.
+// Students can only review their own college (enforced in API route).
 
 import mongoose from "mongoose";
 
@@ -8,6 +10,10 @@ const reviewSchema = new mongoose.Schema({
     ref: "College",
     required: true,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   studentName: { type: String, required: true },
   branch: { type: String, required: true },
   yearOfStudy: { type: Number, required: true },
@@ -16,9 +22,19 @@ const reviewSchema = new mongoose.Schema({
   body: { type: String, required: true },
   category: {
     type: String,
-    enum: ["hostel", "department", "placement", "overall", "lab", "campus"],
+    enum: [
+      "hostel",
+      "department",
+      "placement",
+      "overall",
+      "lab",
+      "campus",
+      "faculty",
+      "food",
+    ],
     required: true,
   },
+  departmentName: { type: String },
   isAnonymous: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
