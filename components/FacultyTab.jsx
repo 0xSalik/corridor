@@ -4,7 +4,6 @@
 "use client";
 
 import { useState, useEffect, useReducer } from "react";
-import { useAuth } from "@/components/AuthProvider";
 
 const designationLabels = {
   professor: "Professor", associate_professor: "Associate Professor",

@@ -94,14 +94,18 @@ export async function POST(request) {
       return NextResponse.json({ error: "Name and department are required" }, { status: 400 });
     }
 
-    if (decoded.collegeId && body.collegeId !== decoded.collegeId) {
+    if (!decoded.collegeId) {
+      return NextResponse.json({ error: "Your account is not linked to a college" }, { status: 403 });
+    }
+
+    if (body.collegeId && body.collegeId !== decoded.collegeId) {
       return NextResponse.json({ error: "You can only add faculty to your own college" }, { status: 403 });
     }
 
     await connectDB();
 
     const faculty = await Faculty.create({
-      collegeId: body.collegeId || decoded.collegeId,
+      collegeId: decoded.collegeId,
       addedBy: decoded.userId,
       name: body.name,
       department: body.department,

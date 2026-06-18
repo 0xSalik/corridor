@@ -1,8 +1,7 @@
-// API route for adding an answer to an existing question.
-
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Question from "@/models/Question";
+import { getAuthUser } from "@/lib/auth";
 import mongoose from "mongoose";
 
 export async function POST(request, { params }) {
@@ -16,11 +15,26 @@ export async function POST(request, { params }) {
       );
     }
 
+    const decoded = await getAuthUser();
+    if (!decoded) {
+      return NextResponse.json(
+        { error: "You must be logged in to answer a question" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
-    if (!body.text) {
+    if (!body.text || !body.text.trim()) {
       return NextResponse.json(
         { error: "Answer text is required" },
+        { status: 400 }
+      );
+    }
+
+    if (body.text.length > 2000) {
+      return NextResponse.json(
+        { error: "Answer must be under 2000 characters" },
         { status: 400 }
       );
     }
@@ -36,8 +50,8 @@ export async function POST(request, { params }) {
     }
 
     question.answers.push({
-      text: body.text,
-      respondentName: body.respondentName || "Anonymous",
+      text: body.text.trim(),
+      respondentName: body.respondentName?.trim() || decoded.name || "Anonymous",
     });
 
     await question.save();

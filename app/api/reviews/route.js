@@ -62,7 +62,14 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    if (decoded.collegeId && body.collegeId !== decoded.collegeId) {
+    if (!decoded.collegeId) {
+      return NextResponse.json(
+        { error: "Your account is not linked to a college" },
+        { status: 403 }
+      );
+    }
+
+    if (body.collegeId !== decoded.collegeId) {
       return NextResponse.json(
         { error: "You can only review your own college" },
         { status: 403 }

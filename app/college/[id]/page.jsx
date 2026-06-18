@@ -137,9 +137,9 @@ export default function CollegeDetailPage({ params }) {
         </div>
         <div className="flex items-center gap-4 mt-3 flex-wrap">
           {college.averagePlacement > 0 && <span className="text-sm font-medium text-[var(--color-accent)]">Avg. placement: {college.averagePlacement} LPA</span>}
-          {user && (
+          {isAspirant && (
             <button onClick={toggleSave} className={`text-sm px-3 py-1 rounded-md border cursor-pointer transition-colors ${saved ? "bg-[var(--color-accent)] text-white border-[var(--color-accent)]" : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)]"}`}>
-              {saved ? "Saved" : "Save to shortlist"}
+              {saved ? "★ Saved" : "Save to shortlist"}
             </button>
           )}
           {isOwnCollege && <span className="text-xs px-3 py-1 rounded-full bg-[var(--color-badge-public)] text-[var(--color-badge-public-text)]">Your college</span>}
@@ -174,7 +174,7 @@ export default function CollegeDetailPage({ params }) {
           {college.departments?.length > 0 ? college.departments.map((dept, i) => (
             <div key={i} className="flex items-center justify-between border border-[var(--color-border)] rounded-lg p-4 bg-[var(--color-card)]">
               <div><p className="font-medium">{dept.name}</p><p className="text-xs text-[var(--color-muted)]">{dept.reviewCount} reviews</p></div>
-              <div className="flex items-center gap-1.5"><span className="text-[var(--color-star)]">★</span><span className="text-sm font-medium">{dept.rating.toFixed(1)}</span></div>
+              <div className="flex items-center gap-1.5"><span className="text-[var(--color-star)]">★</span><span className="text-sm font-medium">{dept.rating != null ? dept.rating.toFixed(1) : "N/A"}</span></div>
             </div>
           )) : <p className="text-[var(--color-muted)]">No department data available.</p>}
         </div>
@@ -223,22 +223,41 @@ export default function CollegeDetailPage({ params }) {
       {activeTab === "connect" && (
         <div className="space-y-4">
           <p className="text-[var(--color-muted)] mb-4">Current students who are open to answering your questions.</p>
-          {mentors.length > 0 ? mentors.map((m) => (
-            <div key={m._id} className="border border-[var(--color-border)] rounded-lg p-5 bg-[var(--color-card)]">
-              <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div>
-                  <p className="font-[family-name:var(--font-heading)] font-semibold">{m.name}</p>
-                  <p className="text-sm text-[var(--color-muted)]">{m.branch}{m.yearOfStudy ? `, Year ${m.yearOfStudy}` : ""}</p>
+          {mentors.length > 0 ? mentors.map((m) => {
+            const method = m.mentoring?.contactMethod;
+            const info = m.mentoring?.contactInfo;
+            let contactHref = null;
+            if (method === "whatsapp" && info) contactHref = `https://wa.me/${info.replace(/\D/g, "")}`;
+            else if (method === "email" && info) contactHref = `mailto:${info}`;
+            else if (method === "telegram" && info) contactHref = `https://t.me/${info.replace("@", "")}`;
+            else if (method === "instagram" && info) contactHref = `https://instagram.com/${info.replace("@", "")}`;
+
+            return (
+              <div key={m._id} className="border border-[var(--color-border)] rounded-lg p-5 bg-[var(--color-card)]">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="font-[family-name:var(--font-heading)] font-semibold">{m.name}</p>
+                    <p className="text-sm text-[var(--color-muted)]">{m.branch}{m.yearOfStudy ? `, Year ${m.yearOfStudy}` : ""}</p>
+                  </div>
+                  {method && info && user ? (
+                    contactHref ? (
+                      <a href={contactHref} target="_blank" rel="noopener noreferrer"
+                        className="text-sm px-3 py-1 rounded-full bg-[var(--color-accent-light)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition-colors">
+                        {methodLabels[method] || method}: {info}
+                      </a>
+                    ) : (
+                      <span className="text-sm px-3 py-1 rounded-full bg-[var(--color-accent-light)] text-[var(--color-accent)]">
+                        {methodLabels[method] || method}: {info}
+                      </span>
+                    )
+                  ) : method && !user ? (
+                    <Link href="/login" className="text-xs text-[var(--color-accent)] hover:underline">Log in to see contact</Link>
+                  ) : null}
                 </div>
-                {m.mentoring?.contactMethod && m.mentoring?.contactInfo && (
-                  <span className="text-sm px-3 py-1 rounded-full bg-[var(--color-accent-light)] text-[var(--color-accent)]">
-                    {methodLabels[m.mentoring.contactMethod] || m.mentoring.contactMethod}: {m.mentoring.contactInfo}
-                  </span>
-                )}
+                {m.mentoring?.about && <p className="text-sm mt-3 leading-relaxed">{m.mentoring.about}</p>}
               </div>
-              {m.mentoring?.about && <p className="text-sm mt-3 leading-relaxed">{m.mentoring.about}</p>}
-            </div>
-          )) : <p className="text-[var(--color-muted)]">No students are available for mentoring at this college right now.</p>}
+            );
+          }) : <p className="text-[var(--color-muted)]">No students are available for mentoring at this college right now.</p>}
         </div>
       )}
     </div>

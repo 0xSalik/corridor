@@ -1,8 +1,7 @@
-// Connect API: list students who are available for mentoring at a given college.
-
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
+import { getAuthUser } from "@/lib/auth";
 import mongoose from "mongoose";
 
 export async function GET(request) {
@@ -17,6 +16,8 @@ export async function GET(request) {
       );
     }
 
+    const decoded = await getAuthUser();
+
     await connectDB();
 
     const mentors = await User.find({
@@ -27,7 +28,24 @@ export async function GET(request) {
       .select("name branch yearOfStudy mentoring.about mentoring.contactMethod mentoring.contactInfo")
       .lean();
 
-    return NextResponse.json(mentors);
+    const results = mentors.map((m) => {
+      const mentor = {
+        _id: m._id,
+        name: m.name,
+        branch: m.branch,
+        yearOfStudy: m.yearOfStudy,
+        mentoring: { about: m.mentoring?.about },
+      };
+
+      if (decoded) {
+        mentor.mentoring.contactMethod = m.mentoring?.contactMethod;
+        mentor.mentoring.contactInfo = m.mentoring?.contactInfo;
+      }
+
+      return mentor;
+    });
+
+    return NextResponse.json(results);
   } catch (error) {
     console.error("GET /api/connect error:", error);
     return NextResponse.json({ error: "Failed to load mentors" }, { status: 500 });

@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 
-const categories = ["overall", "hostel", "department", "placement", "lab", "campus"];
+const categories = ["overall", "hostel", "department", "placement", "lab", "campus", "faculty", "food"];
 
 export default function ReviewForm({ collegeId, onReviewAdded }) {
   const { user } = useAuth();

@@ -3,6 +3,7 @@
 import { Lora, DM_Sans } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "@/styles/globals.css";
 
 const lora = Lora({
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

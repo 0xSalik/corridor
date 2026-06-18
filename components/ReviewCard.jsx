@@ -8,6 +8,8 @@ export default function ReviewCard({ review }) {
     overall: "bg-gray-100 text-gray-700",
     lab: "bg-purple-100 text-purple-800",
     campus: "bg-teal-100 text-teal-800",
+    faculty: "bg-indigo-100 text-indigo-800",
+    food: "bg-orange-100 text-orange-800",
   };
 
   const stars = Array.from({ length: 5 }, (_, i) => i < review.rating);

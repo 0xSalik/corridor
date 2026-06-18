@@ -3,7 +3,6 @@
 "use client";
 
 import { useState, useEffect, useReducer } from "react";
-import { useAuth } from "@/components/AuthProvider";
 
 const typeLabels = {
   lab: "Lab", hostel: "Hostel", library: "Library", sports: "Sports",
@@ -13,7 +12,6 @@ const typeLabels = {
 const typeOptions = Object.entries(typeLabels);
 
 export default function FacilitiesTab({ collegeId, isOwnCollege }) {
-  const { user } = useAuth();
   const [facilities, setFacilities] = useState([]);
   const [refresh, triggerRefresh] = useReducer((x) => x + 1, 0);
   const [filterType, setFilterType] = useState("");

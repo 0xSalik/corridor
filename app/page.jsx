@@ -1,11 +1,39 @@
-// Homepage: landing page for visitors, redirects logged-in users to dashboard.
-
 "use client";
 
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+function HomeSearch() {
+  const [query, setQuery] = useState("");
+  const router = useRouter();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (query.trim()) {
+      router.push(`/explore?q=${encodeURIComponent(query.trim())}`);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="relative max-w-xl">
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search for a college, city, or branch..."
+        className="w-full px-5 py-3.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-foreground)] placeholder-[var(--color-muted)] focus:outline-none focus:border-[var(--color-accent)] transition-colors pr-24 shadow-sm"
+      />
+      <button
+        type="submit"
+        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-md bg-[var(--color-accent)] text-white text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
+      >
+        Search
+      </button>
+    </form>
+  );
+}
 
 export default function HomePage() {
   const { user, loading } = useAuth();
@@ -18,7 +46,11 @@ export default function HomePage() {
   }, [user, loading, router]);
 
   if (loading || user) {
-    return <div className="max-w-6xl mx-auto px-6 py-20 text-center text-[var(--color-muted)]">Loading...</div>;
+    return (
+      <div className="max-w-6xl mx-auto px-6 py-20 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -28,11 +60,16 @@ export default function HomePage() {
         <h1 className="text-4xl md:text-5xl leading-tight mb-6 max-w-3xl">
           The college info students actually share with each other.
         </h1>
-        <p className="text-lg text-[var(--color-muted)] max-w-2xl mb-10 leading-relaxed">
+        <p className="text-lg text-[var(--color-muted)] max-w-2xl mb-8 leading-relaxed">
           Corridor connects you with real students at real colleges. Read their honest
           department reviews, check placement numbers, get your rank matched against
           previous cutoffs, and talk to someone who has been exactly where you are now.
         </p>
+
+        <div className="mb-10">
+          <HomeSearch />
+        </div>
+
         <div className="flex flex-wrap gap-4">
           <Link
             href="/signup"
@@ -49,7 +86,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* What you get */}
+      {/* Stats strip */}
+      <section className="py-8 border-t border-[var(--color-border)]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { value: "Real", label: "Student reviews" },
+            { value: "JoSAA", label: "Cutoff data" },
+            { value: "4", label: "Entrance exams" },
+            { value: "Free", label: "Always" },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <p className="text-xl font-[family-name:var(--font-heading)] font-semibold text-[var(--color-accent)]">{stat.value}</p>
+              <p className="text-sm text-[var(--color-muted)]">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Two sides */}
       <section className="py-16 border-t border-[var(--color-border)]">
         <h2 className="text-2xl mb-10">Two sides of the same coin</h2>
         <div className="grid md:grid-cols-2 gap-8">
@@ -69,7 +123,7 @@ export default function HomePage() {
               <li>Write detailed reviews about your departments, hostels, labs, food, and faculty</li>
               <li>Answer questions from people considering your college</li>
               <li>Help aspirants by making yourself available as a mentor</li>
-              <li>All reviews stay on your college page, building a real picture over time</li>
+              <li>Rate and review individual professors (RateMyProfessor-style)</li>
             </ul>
           </div>
         </div>
@@ -85,7 +139,7 @@ export default function HomePage() {
             { title: "College comparison", desc: "Put two or three colleges next to each other. Compare departments, placements, facilities, and student ratings." },
             { title: "Student connect", desc: "Find current students at any college who are open to answering your questions over WhatsApp, email, or Telegram." },
             { title: "Anonymous Q&A", desc: "Ask the awkward questions. Is the hostel actually livable? Do non-CS branches get placed? No judgment." },
-            { title: "Real cutoff data", desc: "Predictions use actual closing ranks from JoSAA, CSAB, and state counselling rounds from the last three years." },
+            { title: "Faculty ratings", desc: "Rate professors on quality, difficulty, and teaching style. Help future students pick the right sections." },
           ].map((f) => (
             <div key={f.title} className="p-5 border border-[var(--color-border)] rounded-lg bg-[var(--color-card)]">
               <h3 className="font-[family-name:var(--font-heading)] font-semibold mb-2">{f.title}</h3>

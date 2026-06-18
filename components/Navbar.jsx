@@ -30,7 +30,7 @@ const studentLinks = [
 
 function NavLinkList({ links, pathname, onClick }) {
   return links.map((link) => {
-    const isActive = pathname === link.href;
+    const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
     return (
       <Link key={link.href} href={link.href} onClick={onClick}
         className={`text-sm transition-colors ${isActive ? "text-[var(--color-accent)] font-medium" : "text-[var(--color-muted)] hover:text-[var(--color-foreground)]"}`}>

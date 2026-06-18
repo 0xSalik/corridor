@@ -62,7 +62,7 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: "Faculty not found" }, { status: 404 });
     }
 
-    if (decoded.collegeId && faculty.collegeId.toString() !== decoded.collegeId) {
+    if (!decoded.collegeId || faculty.collegeId.toString() !== decoded.collegeId) {
       return NextResponse.json({ error: "You can only review faculty at your own college" }, { status: 403 });
     }
 

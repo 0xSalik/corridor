@@ -29,7 +29,7 @@ export default function ProfilePage() {
   const [mentoringContact, setMentoringContact] = useState("");
 
   useEffect(() => {
-    if (!loading && !user) { router.replace("/login"); return; }
+    if (!loading && !user) { router.replace("/login?redirect=/profile"); return; }
     if (!user) return;
     let cancelled = false;
     fetch("/api/auth/profile")
@@ -104,7 +104,11 @@ export default function ProfilePage() {
   }
 
   if (loading || !profile) {
-    return <div className="max-w-2xl mx-auto px-6 py-12 text-[var(--color-muted)]">Loading...</div>;
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-12 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -117,7 +121,7 @@ export default function ProfilePage() {
       </p>
 
       {message && (
-        <div className={`mb-6 p-3 rounded-lg text-sm ${message.includes("updated") ? "bg-[var(--color-badge-public)] text-[var(--color-badge-public-text)]" : "bg-[var(--color-badge-private)] text-[var(--color-badge-private-text)]"}`}>
+        <div className={`mb-6 p-3 rounded-lg text-sm ${message === "Profile updated." ? "bg-[var(--color-badge-public)] text-[var(--color-badge-public-text)]" : "bg-[var(--color-badge-private)] text-[var(--color-badge-private-text)]"}`}>
           {message}
         </div>
       )}

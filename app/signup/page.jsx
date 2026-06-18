@@ -25,6 +25,7 @@ export default function SignupPage() {
   // Aspirant fields
   const [category, setCategory] = useState("general");
   const [jeeMainPercentile, setJeeMainPercentile] = useState("");
+  const [jeeMainRank, setJeeMainRank] = useState("");
   const [jeeAdvancedRank, setJeeAdvancedRank] = useState("");
   const [neetRank, setNeetRank] = useState("");
   const [bitsatScore, setBitsatScore] = useState("");
@@ -82,7 +83,11 @@ export default function SignupPage() {
 
     if (role === "aspirant") {
       const examScores = { category };
-      if (jeeMainPercentile) examScores.jeeMain = { percentile: parseFloat(jeeMainPercentile) };
+      if (jeeMainPercentile || jeeMainRank) {
+        examScores.jeeMain = {};
+        if (jeeMainPercentile) examScores.jeeMain.percentile = parseFloat(jeeMainPercentile);
+        if (jeeMainRank) examScores.jeeMain.rank = parseInt(jeeMainRank);
+      }
       if (jeeAdvancedRank) examScores.jeeAdvanced = { rank: parseInt(jeeAdvancedRank) };
       if (neetRank) examScores.neet = { rank: parseInt(neetRank) };
       if (bitsatScore) examScores.bitsat = { score: parseInt(bitsatScore) };
@@ -242,12 +247,23 @@ export default function SignupPage() {
                 </select>
               </div>
               <p className="text-sm text-[var(--color-muted)]">Fill in whichever exams you have taken. Skip the rest.</p>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-[var(--color-muted)] mb-1">JEE Main Percentile</label>
-                  <input type="number" step="0.01" min="0" max="100" value={jeeMainPercentile} onChange={(e) => setJeeMainPercentile(e.target.value)}
-                    className="w-full px-3 py-2 text-sm rounded-md border border-[var(--color-border)] bg-[var(--color-card)] focus:outline-none focus:border-[var(--color-accent)]" />
+              <fieldset className="border border-[var(--color-border)] rounded-lg p-3 mb-2">
+                <legend className="text-xs font-medium px-1 text-[var(--color-muted)]">JEE Main</legend>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-[var(--color-muted)] mb-1">Percentile</label>
+                    <input type="number" step="0.01" min="0" max="100" value={jeeMainPercentile} onChange={(e) => setJeeMainPercentile(e.target.value)}
+                      className="w-full px-3 py-2 text-sm rounded-md border border-[var(--color-border)] bg-[var(--color-card)] focus:outline-none focus:border-[var(--color-accent)]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[var(--color-muted)] mb-1">Rank</label>
+                    <input type="number" min="1" value={jeeMainRank} onChange={(e) => setJeeMainRank(e.target.value)}
+                      placeholder="Needed for predictions"
+                      className="w-full px-3 py-2 text-sm rounded-md border border-[var(--color-border)] bg-[var(--color-card)] focus:outline-none focus:border-[var(--color-accent)]" />
+                  </div>
                 </div>
+              </fieldset>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-[var(--color-muted)] mb-1">JEE Advanced Rank</label>
                   <input type="number" min="1" value={jeeAdvancedRank} onChange={(e) => setJeeAdvancedRank(e.target.value)}

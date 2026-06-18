@@ -17,10 +17,13 @@ export default function ComparePage() {
     return () => { cancelled = true; };
   }, []);
 
+  const [maxWarning, setMaxWarning] = useState(false);
+
   function toggleCollege(id) {
     setSelected((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= 3) return prev;
+      if (prev.includes(id)) { setMaxWarning(false); return prev.filter((x) => x !== id); }
+      if (prev.length >= 3) { setMaxWarning(true); return prev; }
+      setMaxWarning(false);
       return [...prev, id];
     });
     setResults(null);
@@ -49,6 +52,10 @@ export default function ComparePage() {
           </button>
         ))}
       </div>
+
+      {maxWarning && (
+        <p className="text-sm text-[var(--color-badge-private-text)] mb-4">You can compare up to 3 colleges at a time. Deselect one first.</p>
+      )}
 
       <button onClick={handleCompare} disabled={selected.length < 2 || loading}
         className="px-6 py-2.5 rounded-lg bg-[var(--color-accent)] text-white font-medium hover:opacity-90 disabled:opacity-50 cursor-pointer mb-8">
@@ -109,7 +116,7 @@ export default function ComparePage() {
                     <td className="px-4 py-3 text-[var(--color-muted)]">{dept}</td>
                     {results.map((c) => {
                       const d = (c.departments || []).find((x) => x.name === dept);
-                      return <td key={c._id} className="px-4 py-3">{d ? `${d.rating.toFixed(1)} ★` : "N/A"}</td>;
+                      return <td key={c._id} className="px-4 py-3">{d && d.rating != null ? `${d.rating.toFixed(1)} ★` : "N/A"}</td>;
                     })}
                   </tr>
                 ));

@@ -47,8 +47,8 @@ export default function QuestionItem({ question, onAnswerAdded }) {
 
       {question.answers && question.answers.length > 0 && (
         <div className="space-y-3 mb-4">
-          {question.answers.map((answer, idx) => (
-            <div key={idx} className="pl-4 border-l-2 border-[var(--color-accent-light)]">
+          {question.answers.map((answer) => (
+            <div key={answer._id || `${answer.text}-${answer.respondentName}`} className="pl-4 border-l-2 border-[var(--color-accent-light)]">
               <p className="text-sm leading-relaxed">{answer.text}</p>
               <p className="text-xs text-[var(--color-muted)] mt-1">{answer.respondentName}</p>
             </div>

@@ -47,14 +47,18 @@ export async function POST(request) {
       return NextResponse.json({ error: "Name and type are required" }, { status: 400 });
     }
 
-    if (decoded.collegeId && body.collegeId !== decoded.collegeId) {
+    if (!decoded.collegeId) {
+      return NextResponse.json({ error: "Your account is not linked to a college" }, { status: 403 });
+    }
+
+    if (body.collegeId && body.collegeId !== decoded.collegeId) {
       return NextResponse.json({ error: "You can only add facilities to your own college" }, { status: 403 });
     }
 
     await connectDB();
 
     const facility = await Facility.create({
-      collegeId: body.collegeId || decoded.collegeId,
+      collegeId: decoded.collegeId,
       addedBy: decoded.userId,
       name: body.name,
       type: body.type,

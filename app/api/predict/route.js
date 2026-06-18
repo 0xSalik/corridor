@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import RankData from "@/models/RankData";
 import College from "@/models/College";
+import { escapeRegex } from "@/lib/auth";
 
 export async function GET(request) {
   try {
@@ -46,7 +47,7 @@ export async function GET(request) {
     };
 
     if (branch) {
-      filter.branch = { $regex: new RegExp(branch, "i") };
+      filter.branch = { $regex: new RegExp(escapeRegex(branch), "i") };
     }
 
     const rankEntries = await RankData.find(filter)

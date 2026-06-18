@@ -29,7 +29,7 @@ export default function PredictionTable({ results }) {
           </thead>
           <tbody>
             {results.map((r, i) => (
-              <tr key={i} className="border-t border-[var(--color-border)] hover:bg-[var(--color-card-hover)]">
+              <tr key={`${r.college?._id || i}-${r.branch}-${r.year}`} className="border-t border-[var(--color-border)] hover:bg-[var(--color-card-hover)]">
                 <td className="px-4 py-3">
                   {r.college ? (
                     <Link href={`/college/${r.college._id}`} className="text-[var(--color-accent)] hover:underline font-medium">
@@ -45,9 +45,9 @@ export default function PredictionTable({ results }) {
                   )}
                 </td>
                 <td className="px-4 py-3">{r.branch}</td>
-                <td className="px-4 py-3 text-right">{r.openingRank.toLocaleString()}</td>
-                <td className="px-4 py-3 text-right">{r.closingRank.toLocaleString()}</td>
-                <td className="px-4 py-3 text-center">{r.round}</td>
+                <td className="px-4 py-3 text-right">{r.openingRank?.toLocaleString() ?? "—"}</td>
+                <td className="px-4 py-3 text-right">{r.closingRank?.toLocaleString() ?? "—"}</td>
+                <td className="px-4 py-3 text-center">{r.round ?? "—"}</td>
                 <td className="px-4 py-3 text-center">{r.year}</td>
               </tr>
             ))}

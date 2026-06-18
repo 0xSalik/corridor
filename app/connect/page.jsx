@@ -1,14 +1,48 @@
-// Connect page: aspirants find student mentors at colleges they are interested in.
-
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import Link from "next/link";
+
+function ContactLink({ method, info }) {
+  if (!method || !info) return null;
+
+  const methodLabels = { whatsapp: "WhatsApp", email: "Email", telegram: "Telegram", instagram: "Instagram" };
+  let href = null;
+
+  if (method === "whatsapp") {
+    const num = info.replace(/\D/g, "");
+    href = `https://wa.me/${num}`;
+  } else if (method === "email") {
+    href = `mailto:${info}`;
+  } else if (method === "telegram") {
+    href = `https://t.me/${info.replace("@", "")}`;
+  } else if (method === "instagram") {
+    href = `https://instagram.com/${info.replace("@", "")}`;
+  }
+
+  return href ? (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1.5 text-sm px-3 py-1 rounded-full bg-[var(--color-accent-light)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition-colors"
+    >
+      {methodLabels[method] || method}: {info}
+    </a>
+  ) : (
+    <span className="text-sm px-3 py-1 rounded-full bg-[var(--color-accent-light)] text-[var(--color-accent)]">
+      {methodLabels[method] || method}: {info}
+    </span>
+  );
+}
 
 export default function ConnectPage() {
+  const { user, loading: authLoading } = useAuth();
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState("");
   const [mentors, setMentors] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -32,8 +66,6 @@ export default function ConnectPage() {
     return () => { cancelled = true; };
   }, [selectedCollege]);
 
-  const methodLabels = { whatsapp: "WhatsApp", email: "Email", telegram: "Telegram", instagram: "Instagram" };
-
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
       <h1 className="text-3xl mb-3">Student Connect</h1>
@@ -51,7 +83,15 @@ export default function ConnectPage() {
       </div>
 
       {loading ? (
-        <p className="text-[var(--color-muted)]">Looking for available students...</p>
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="border border-[var(--color-border)] rounded-lg p-5 bg-[var(--color-card)] animate-pulse">
+              <div className="h-5 bg-[var(--color-border)] rounded w-1/3 mb-2" />
+              <div className="h-4 bg-[var(--color-border)] rounded w-1/4 mb-3" />
+              <div className="h-4 bg-[var(--color-border)] rounded w-2/3" />
+            </div>
+          ))}
+        </div>
       ) : mentors.length > 0 ? (
         <div className="space-y-4">
           {mentors.map((m) => (
@@ -63,10 +103,12 @@ export default function ConnectPage() {
                     {m.branch}{m.yearOfStudy ? `, Year ${m.yearOfStudy}` : ""}
                   </p>
                 </div>
-                {m.mentoring?.contactMethod && m.mentoring?.contactInfo && (
-                  <span className="text-sm px-3 py-1 rounded-full bg-[var(--color-accent-light)] text-[var(--color-accent)]">
-                    {methodLabels[m.mentoring.contactMethod] || m.mentoring.contactMethod}: {m.mentoring.contactInfo}
-                  </span>
+                {user ? (
+                  <ContactLink method={m.mentoring?.contactMethod} info={m.mentoring?.contactInfo} />
+                ) : (
+                  <Link href="/login" className="text-xs text-[var(--color-accent)] hover:underline">
+                    Log in to see contact
+                  </Link>
                 )}
               </div>
               {m.mentoring?.about && (

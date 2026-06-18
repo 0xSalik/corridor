@@ -1,8 +1,7 @@
-// API route for questions: GET questions for a college, POST a new question.
-
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Question from "@/models/Question";
+import { getAuthUser } from "@/lib/auth";
 import mongoose from "mongoose";
 
 export async function GET(request) {
@@ -42,6 +41,14 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const decoded = await getAuthUser();
+    if (!decoded) {
+      return NextResponse.json(
+        { error: "You must be logged in to post a question" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     if (!body.collegeId || !body.questionText) {
@@ -58,13 +65,20 @@ export async function POST(request) {
       );
     }
 
+    if (body.questionText.length > 1000) {
+      return NextResponse.json(
+        { error: "Question text must be under 1000 characters" },
+        { status: 400 }
+      );
+    }
+
     await connectDB();
 
     const question = await Question.create({
       collegeId: body.collegeId,
-      questionText: body.questionText,
+      questionText: body.questionText.trim(),
       isAnonymous: body.isAnonymous !== false,
-      askedBy: body.askedBy || null,
+      askedBy: body.isAnonymous !== false ? null : (body.askedBy || decoded.name),
     });
 
     return NextResponse.json(question, { status: 201 });

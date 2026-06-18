@@ -58,16 +58,17 @@ export async function PUT(request) {
     }
 
     if (body.name) user.name = body.name;
-    if (body.branch !== undefined) user.branch = body.branch;
-    if (body.yearOfStudy !== undefined) user.yearOfStudy = body.yearOfStudy;
-    if (body.collegeId !== undefined) user.collegeId = body.collegeId || null;
 
-    if (body.examScores !== undefined) {
-      user.examScores = { ...(user.examScores?.toObject?.() || {}), ...body.examScores };
+    if (user.role === "student") {
+      if (body.branch !== undefined) user.branch = body.branch;
+      if (body.yearOfStudy !== undefined) user.yearOfStudy = body.yearOfStudy;
+      if (body.mentoring !== undefined) {
+        user.mentoring = { ...(user.mentoring?.toObject?.() || {}), ...body.mentoring };
+      }
     }
 
-    if (body.mentoring !== undefined && user.role === "student") {
-      user.mentoring = { ...(user.mentoring?.toObject?.() || {}), ...body.mentoring };
+    if (user.role === "aspirant" && body.examScores !== undefined) {
+      user.examScores = { ...(user.examScores?.toObject?.() || {}), ...body.examScores };
     }
 
     if (body.password && body.password.length >= 6) {

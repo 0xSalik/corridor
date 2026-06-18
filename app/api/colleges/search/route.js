@@ -3,6 +3,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import College from "@/models/College";
+import { escapeRegex } from "@/lib/auth";
 
 export async function GET(request) {
   try {
@@ -12,7 +13,7 @@ export async function GET(request) {
     await connectDB();
 
     const filter = q
-      ? { name: { $regex: new RegExp(q, "i") } }
+      ? { name: { $regex: new RegExp(escapeRegex(q), "i") } }
       : {};
 
     const colleges = await College.find(filter)

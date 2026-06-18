@@ -59,6 +59,25 @@ table {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Skeleton loading animation */
+@keyframes shimmer {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Line clamping */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Responsive text scaling */
 @media (max-width: 640px) {
   h1 { font-size: 1.75rem; }
