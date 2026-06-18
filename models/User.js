@@ -1,5 +1,5 @@
-// User model: multi-tier accounts for students (current college-goers who write reviews)
-// and aspirants (prospective students exploring colleges). Stores exam scores for predictions.
+// User model: two tiers - students (review their own college) and aspirants (explore + predict).
+// Students can opt into mentoring so aspirants can find them.
 
 import mongoose from "mongoose";
 import pkg from "bcryptjs";
@@ -32,6 +32,20 @@ const examScoresSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const mentoringSchema = new mongoose.Schema(
+  {
+    available: { type: Boolean, default: false },
+    about: { type: String, maxlength: 300 },
+    contactMethod: {
+      type: String,
+      enum: ["whatsapp", "email", "telegram", "instagram", ""],
+      default: "",
+    },
+    contactInfo: { type: String },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
   email: {
@@ -47,12 +61,15 @@ const userSchema = new mongoose.Schema({
     enum: ["student", "aspirant"],
     required: true,
   },
-  // Fields for students (current college-goers)
-  college: { type: String },
+  collegeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "College",
+  },
   branch: { type: String },
   yearOfStudy: { type: Number },
-  // Exam scores for aspirants (and optionally students)
   examScores: examScoresSchema,
+  savedColleges: [{ type: mongoose.Schema.Types.ObjectId, ref: "College" }],
+  mentoring: mentoringSchema,
   createdAt: { type: Date, default: Date.now },
 });
 
