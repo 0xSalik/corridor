@@ -24,6 +24,7 @@ export async function GET() {
         name: decoded.name,
         email: decoded.email,
         role: decoded.role,
+        collegeId: decoded.collegeId || null,
       },
     });
   } catch {
