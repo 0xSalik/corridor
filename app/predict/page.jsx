@@ -1,8 +1,11 @@
 // Predict page: enter your rank/score and exam type to see which colleges you might get into.
+// Primarily for aspirants. Students see a notice that this page is for aspirants.
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import Link from "next/link";
 import PredictionTable from "@/components/PredictionTable";
 
 const exams = [
@@ -13,10 +16,23 @@ const exams = [
 ];
 
 export default function PredictPage() {
+  const { user } = useAuth();
   const [exam, setExam] = useState("jee_main");
   const [rank, setRank] = useState("");
   const [quota, setQuota] = useState("general");
   const [branch, setBranch] = useState("");
+
+  useEffect(() => {
+    if (!user || user.role !== "aspirant") return;
+    let cancelled = false;
+    fetch("/api/auth/profile").then((r) => r.json()).then((d) => {
+      if (cancelled || !d.user?.examScores) return;
+      const es = d.user.examScores;
+      if (es.category) setQuota(es.category);
+      if (es.jeeMain?.rank) setRank(es.jeeMain.rank.toString());
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [user]);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
