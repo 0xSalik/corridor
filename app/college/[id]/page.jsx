@@ -9,6 +9,8 @@ import { useAuth } from "@/components/AuthProvider";
 import ReviewCard from "@/components/ReviewCard";
 import ReviewForm from "@/components/ReviewForm";
 import QuestionItem from "@/components/QuestionItem";
+import FacilitiesTab from "@/components/FacilitiesTab";
+import FacultyTab from "@/components/FacultyTab";
 
 export default function CollegeDetailPage({ params }) {
   const { id } = use(params);
@@ -102,6 +104,8 @@ export default function CollegeDetailPage({ params }) {
   const tabs = [
     { key: "overview", label: "Overview" },
     { key: "departments", label: "Departments" },
+    { key: "facilities", label: "Facilities" },
+    { key: "faculty", label: "Faculty" },
     { key: "reviews", label: `Reviews (${reviews.length})` },
     { key: "questions", label: `Questions (${questions.length})` },
   ];
@@ -174,6 +178,16 @@ export default function CollegeDetailPage({ params }) {
             </div>
           )) : <p className="text-[var(--color-muted)]">No department data available.</p>}
         </div>
+      )}
+
+      {/* Facilities */}
+      {activeTab === "facilities" && (
+        <FacilitiesTab collegeId={id} isOwnCollege={isOwnCollege} />
+      )}
+
+      {/* Faculty */}
+      {activeTab === "faculty" && (
+        <FacultyTab collegeId={id} departments={college.departments} isOwnCollege={isOwnCollege} />
       )}
 
       {/* Reviews */}
